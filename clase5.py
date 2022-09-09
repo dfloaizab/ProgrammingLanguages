@@ -29,9 +29,16 @@ print(str(lista_nombres_mayus))
 
 #Loading a list of dictionaries as a key/value dataset using a function in Module2
 myFileName = input("Ingrese el nombre del archivo:")
-DataBase1 = M2.loadDataCSV(myFileName)
+PlayList = M2.loadDataCSV(myFileName)
+
+#Loading a list of dictionaries as a key/value dataset using a function in Module2
+myFileName = input("Ingrese el nombre del archivo:")
+PlayList = M2.loadDataCSV(myFileName)
 
 #Filtering a list of dictionaries using higher order functions
-
+filtrada1 = list(filter(lambda d: d['nick'] == 'DFlb1977', PlayList))
+print(filtrada1)
 
 #Filtering a list of dictionaries using list comprehension
+filtrada2 = [ p for p in  PlayList if p['points'] == '8000' ]
+print(filtrada2)
