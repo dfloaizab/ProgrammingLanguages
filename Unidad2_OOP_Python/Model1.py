@@ -21,5 +21,11 @@ class DataLoader:
 
     def loadXML():
         pass
+    
+    
+    class Entity1:
+        pass
+    
+    class Entity2:
 
     
