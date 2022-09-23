@@ -1,0 +1,2 @@
+class ViewData:
+    pass
