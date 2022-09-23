@@ -2,7 +2,7 @@ class DataController:
 
 
     def __init__(self, pModel, pView):
-        self.model
+        self.model = pModel
         self.view = pView
 
     
