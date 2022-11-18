@@ -3,7 +3,7 @@
 
 public class SyncCounterMain implements Runnable {
 	
-	static SyncCounter mySyncCounter;
+	static SynchronizedCounter mySyncCounter;
 
 	@Override
 	public void run() {
