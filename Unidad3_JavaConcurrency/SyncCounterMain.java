@@ -23,7 +23,7 @@ public class SyncCounterMain implements Runnable {
 		
 	public static void main(String args[])
 	{
-		mySyncCounter = new SyncCounter();
+		mySyncCounter = new SynchronizedCounter();
 		
 		Thread t1 = new Thread(new SyncCounterMain());
 		Thread t2 = new Thread(new SyncCounterMain());		
