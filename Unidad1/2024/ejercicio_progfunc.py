@@ -1,4 +1,4 @@
-# from functools import reduce
+ from functools import reduce
 
 
 # estudiantes = [
@@ -28,40 +28,40 @@
 # print(promedio_general)
 
 # ##### RECURSION EN EL PARADIGMA FUNCIONAL
-# lista_test = list(range(1,10,1))
+ lista_test = list(range(1,10,1))
 
-# def fun_sumalista_iter(lista):
-#     suma=0
-#     for n in lista:
-#         suma = suma +n
-#     return suma
+def fun_sumalista_iter(lista):
+    suma=0
+    for n in lista:
+         suma = suma +n
+     return suma
 
 # #función recursiva 
-# def fun_sumalista_rec(lista):
-#     if not lista:
-#         return 0
-#     else:
-#         return lista[0] + fun_sumalista_rec(lista[1:])
+def fun_sumalista_rec(lista):
+     if not lista:
+         return 0
+     else:
+         return lista[0] + fun_sumalista_rec(lista[1:])
     
-# def fun_sumalista_rec_ht(lista):
-#     if not lista:
-#         return 0
-#     else:
-#         #separa la lista en un elemento inicial y el resto:
-#         head, *tail = lista
-#         return head + fun_sumalista_rec_ht(tail)
+ def fun_sumalista_rec_ht(lista):
+     if not lista:
+         return 0
+     else:
+         #separa la lista en un elemento inicial y el resto:
+         head, *tail = lista
+         return head + fun_sumalista_rec_ht(tail)
     
-# print(fun_sumalista_iter(lista_test))
-# print(fun_sumalista_rec(lista_test))
-# print(fun_sumalista_rec_ht(lista_test))
+ print(fun_sumalista_iter(lista_test))
+ print(fun_sumalista_rec(lista_test))
+ print(fun_sumalista_rec_ht(lista_test))
 
-# #filtrar lista con los elementos > a limite
-# def filtra_lista(lista, limite):
-#     if not lista:
-#         return []
-#     else:
-#         #
-#         head, *tail = lista
+ #filtrar lista con los elementos > a limite
+def filtra_lista(lista, limite):
+     if not lista:
+         return []
+     else:
+         #
+         head, *tail = lista
 
 
 #EJERCICIO:
