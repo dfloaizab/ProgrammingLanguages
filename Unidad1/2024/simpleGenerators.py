@@ -2,8 +2,6 @@ def gen1():
     for i in range(1,101):
         yield i
 
-gen_fun = gen1()
-
 #obtener primeros 2 valores:
 print(next(gen1()))
 print(next(gen1()))
