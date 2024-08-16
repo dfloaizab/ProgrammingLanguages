@@ -7,7 +7,7 @@ if __name__ == "__main__":
     print("2. filtrar\n")
     print("3. salir\n")
 
-    op = input("ingrese opción deseada:")
+    op = int(input("ingrese opción deseada:"))
 
     #crear publishers:
     while op != 3:
@@ -21,7 +21,7 @@ if __name__ == "__main__":
             tot_ventas = input("ingrese el total de ventas\n")
             filterPublisherByTotalSales_FilterLambda(tot_ventas)
 
-        op = input("ingrese opción deseada:")
+        op = int(input("ingrese opción deseada:"))
 
 
 
