@@ -1,1 +1,12 @@
-
+ID,Nombre,Edad,Salario,Departamento
+1,Ana,25,3000,Ventas
+2,Carlos,30,4000,IT
+3,Elena,35,5000,RRHH
+4,David,40,6000,IT
+5,Beto,28,3500,Ventas
+6,Luisa,50,7000,Gerencia
+7,Andrés,45,7500,I+D
+8,Santiago,28,5500,IT
+9,Zaira,30,8000,I+D
+10,Nayeli,34,8000,I+D
+11,Sebastian,35,8000,I+D
