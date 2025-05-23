@@ -423,3 +423,209 @@ synchronized (playersLock) {
 - **Propósito**: Acceder a múltiples recursos protegidos
 - **Importante**: Siempre adquirir candados en el mismo orden para evitar deadlocks
 - **En el ejemplo**: Mostrar estadísticas requiere acceso a jugadores y score
+
+## Ejercicio Preparación Examen Final: Sistema de Batalla Multijugador
+
+Complete el siguiente código implementando candados implícitos (intrínsecos):
+
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+public class BattleArena {
+    // PREGUNTA 1: ¿Qué tipo de variable debe ser battleActive y por qué?
+    private _______ boolean battleActive = false;
+    
+    private int totalDamageDealt = 0;
+    private final List<Warrior> warriors = new ArrayList<>();
+    
+    // PREGUNTA 2: ¿Qué monitores específicos necesitamos?
+    private final Object _______ = new Object(); // Para el daño total
+    private final Object _______ = new Object(); // Para la lista de guerreros
+    
+    public static void main(String[] args) throws InterruptedException {
+        BattleArena arena = new BattleArena();
+        arena.startBattle();
+        Thread.sleep(8000); // Esperar 8 segundos
+    }
+    
+    // PREGUNTA 3: ¿Debe ser sincronizado este método? ¿Por qué?
+    public _______ void startBattle() {
+        battleActive = true;
+        System.out.println("⚔️ ¡La batalla ha comenzado!");
+        
+        // Crear hilos de guerreros
+        for (int i = 0; i < 4; i++) {
+            Warrior warrior = new Warrior("Warrior_" + i, this);
+            
+            // PREGUNTA 4: Complete la sincronización para agregar guerreros
+            _______ (_______) {
+                warriors.add(warrior);
+                System.out.println("🛡️ " + warrior.getName() + " se unió a la batalla");
+            }
+            
+            new Thread(warrior::fight, "Fighter_" + i).start();
+        }
+        
+        // Iniciar hilo observador
+        new Thread(this::battleObserver, "Observer").start();
+    }
+    
+    public void dealDamage(int damage, String attackerName) {
+        // PREGUNTA 5: Implemente usando candado implícito para totalDamageDealt
+        _______ (_______) {
+            totalDamageDealt += damage;
+            System.out.println("💥 " + attackerName + " causó " + damage + 
+                             " de daño (Total: " + totalDamageDealt + ")");
+            
+            // Si el daño total supera 150, terminar batalla
+            if (totalDamageDealt >= 150) {
+                battleActive = false;
+                System.out.println("🏆 ¡Batalla terminada! Daño total: " + totalDamageDealt);
+                
+                // Notificar a observadores
+                _______.notifyAll(); // Despertar hilos esperando
+            }
+        }
+    }
+    
+    /**
+     * Observador que usa wait/notify pattern
+     */
+    private void battleObserver() {
+        try {
+            synchronized (damageLock) {
+                while (battleActive && totalDamageDealt < 150) {
+                    System.out.println("👁️ Observador esperando... (Daño actual: " + totalDamageDealt + ")");
+                    damageLock.wait(3000); // Esperar máximo 3 segundos
+                }
+            }
+            System.out.println("👁️ Observador: La batalla ha terminado!");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+    
+    public boolean isBattleActive() {
+        return battleActive; // Variable volátil
+    }
+    
+    public int getWarriorCount() {
+        synchronized (warriorsLock) {
+            return warriors.size();
+        }
+    }
+    
+    public int getTotalDamage() {
+        synchronized (damageLock) {
+            return totalDamageDealt;
+        }
+    }
+}
+
+class Warrior {
+    private final String name;
+    private final BattleArena arena;
+    private int damageDealt = 0;
+    
+    public Warrior(String name, BattleArena arena) {
+        this.name = name;
+        this.arena = arena;
+    }
+    
+    public void fight() {
+        while (arena.isBattleActive()) {
+            try {
+                int damage = (int)(Math.random() * 25) + 5; // 5-30 daño
+                arena.dealDamage(damage, name);
+                damageDealt += damage;
+                
+                Thread.sleep(800 + (int)(Math.random() * 1200)); // 0.8-2.0 segundos
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        System.out.println("⚡ " + name + " terminó la batalla (Daño total: " + damageDealt + ")");
+    }
+    
+    public String getName() {
+        return name;
+    }
+}
+```
+
+---
+
+## Preguntas del Ejercicio
+
+### 1. Variables Volátiles (2 puntos)
+**¿Qué tipo de variable debe ser `battleActive` y por qué?**
+
+*Analice la necesidad de visibilidad entre hilos. ¿Es suficiente `volatile` o se necesita sincronización adicional? Justifique considerando que múltiples hilos leen esta variable pero solo uno la modifica.*
+
+### 2. Monitores Específicos (2 puntos)
+**¿Qué monitores específicos necesitamos y cómo deben llamarse?**
+
+*Identifique los recursos que requieren protección y explique por qué usar monitores separados es mejor que sincronizar en `this`.*
+
+### 3. Métodos Sincronizados (2 puntos)
+**¿Debe ser sincronizado el método `startBattle()`? ¿Por qué?**
+
+*Considere qué pasa si múltiples hilos intentan iniciar la batalla simultáneamente. Analice las operaciones que realiza el método.*
+
+### 4. Bloques Sincronizados (2 puntos)
+**Complete la sincronización para agregar guerreros a la lista.**
+
+*Implemente el bloque sincronizado correcto y explique por qué ArrayList requiere sincronización externa.*
+
+### 5. Wait/Notify Pattern (2 puntos)
+**Implemente el método `dealDamage()` con candado implícito y notificación.**
+
+*Use el monitor apropiado, implemente el patrón wait/notify correctamente y explique cuándo usar `notify()` vs `notifyAll()`.*
+
+---
+
+## Comparación: Candados Implícitos vs Explícitos
+
+| Aspecto | Candados Implícitos | Candados Explícitos |
+|---------|-------------------|-------------------|
+| **Sintaxis** | `synchronized` | `lock.lock()` / `try-finally` |
+| **Facilidad de uso** | Más simple, automático | Más código, manual |
+| **Control** | Limitado | Más flexible |
+| **Timeout** | No disponible | `tryLock(timeout)` |
+| **Interrupciones** | No configurable | `lockInterruptibly()` |
+| **Condiciones** | Solo wait/notify | Múltiples condiciones |
+| **Performance** | Optimizado por JVM | Ligeramente más lento |
+| **Debugging** | Menos información | Mejor instrumentación |
+
+**Recomendación**: Use candados implícitos (`synchronized`) para la mayoría de casos. Solo use explícitos cuando necesite características avanzadas específicas.
+
+---
+
+## Bibliografía
+
+1. **Oracle Java Documentation**  
+   *Java Concurrency Tutorial - Intrinsic Locks and Synchronization*  
+   https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html
+
+2. **Goetz, Brian et al.**  
+   *"Java Concurrency in Practice"* - Capítulos 2-4 (Intrinsic Locks)  
+   Addison-Wesley Professional, 2006  
+   ISBN: 978-0321349606
+
+3. **Oracle Java Language Specification**  
+   *Chapter 17: Threads and Locks*  
+   https://docs.oracle.com/javase/specs/jls/se11/html/jls-17.html
+
+4. **Bloch, Joshua**  
+   *"Effective Java"* - Items 78-84 (Concurrency)  
+   3rd Edition, Addison-Wesley Professional, 2017
+
+5. **Lea, Doug**  
+   *"Concurrent Programming in Java"* - Capítulos sobre Monitors  
+   Addison-Wesley Professional, 2nd Edition, 1999
+
+6. **Java Memory Model (JSR-133)**  
+   *Specification for volatile and synchronized semantics*  
+   https://jcp.org/en/jsr/detail?id=133
